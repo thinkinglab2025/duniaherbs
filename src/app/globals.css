@@ -1,0 +1,100 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --herb-dark: #060810;
+  --herb-surface: #0c1020;
+  --herb-sage: #9cb59d;
+  --herb-accent: #c17f59;
+  --herb-gold: #d4a853;
+  --herb-gold-light: #e8c97a;
+  /* PWA safe area for notch & home indicator */
+  --safe-area-inset-top: env(safe-area-inset-top, 0px);
+  --safe-area-inset-bottom: env(safe-area-inset-bottom, 0px);
+  --safe-area-inset-left: env(safe-area-inset-left, 0px);
+  --safe-area-inset-right: env(safe-area-inset-right, 0px);
+}
+
+body {
+  @apply text-stone-100 antialiased;
+  background-color: #060810;
+  background-image:
+    radial-gradient(ellipse 80% 50% at 50% -10%, rgba(212,168,83,0.08) 0%, transparent 60%),
+    radial-gradient(ellipse 60% 40% at 80% 60%, rgba(30,60,140,0.12) 0%, transparent 50%),
+    radial-gradient(ellipse 50% 50% at 10% 80%, rgba(40,80,160,0.06) 0%, transparent 50%),
+    linear-gradient(180deg, #080c18 0%, #060810 30%, #070a14 70%, #060810 100%);
+  background-attachment: fixed;
+}
+
+/* Luxury noise texture overlay */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 9999;
+  opacity: 0.04;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+}
+
+/* Ambient gold glow - top of page */
+body::after {
+  content: '';
+  position: fixed;
+  top: -30%;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 120%;
+  height: 60%;
+  pointer-events: none;
+  z-index: 0;
+  opacity: 0.5;
+  background: radial-gradient(ellipse 50% 40% at 50% 20%, rgba(212,168,83,0.06) 0%, rgba(30,60,140,0.04) 40%, transparent 70%);
+}
+
+/* Marquee infinite scroll */
+@keyframes marquee-scroll {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
+}
+.marquee-track {
+  animation: marquee-scroll 30s linear infinite;
+}
+.marquee-track:hover {
+  animation-play-state: paused;
+}
+
+/* Product carousel scrollbar */
+.product-scroll {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(120, 113, 108, 0.5) transparent;
+}
+.product-scroll::-webkit-scrollbar {
+  height: 6px;
+}
+.product-scroll::-webkit-scrollbar-track {
+  background: transparent;
+}
+.product-scroll::-webkit-scrollbar-thumb {
+  background: rgba(120, 113, 108, 0.5);
+  border-radius: 3px;
+}
+.product-scroll::-webkit-scrollbar-thumb:hover {
+  background: rgba(120, 113, 108, 0.7);
+}
+
+/* Respect user preference for reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+  .marquee-track {
+    animation: none !important;
+  }
+}

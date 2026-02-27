@@ -1,0 +1,29 @@
+# dependencies
+node_modules
+.pnp
+.pnp.js
+
+# next
+.next
+out
+
+# env
+.env
+.env.local
+.env.*.local
+
+# debug
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# misc
+.DS_Store
+*.pem
+
+# large video files (GitHub limit 100MB)
+public/IMG_0596.MP4
+public/IMG_0611.MP4
+
+# typescript
+next-env.d.ts
