@@ -88,6 +88,16 @@ export default function CartDrawer() {
   const [error, setError] = useState('');
 
   useEffect(() => {
+    const onOpen = (e: Event) => {
+      const detail = (e as CustomEvent<{ directCheckout?: boolean }>)?.detail;
+      setOpen(true);
+      setStep(detail?.directCheckout ? 'checkout' : 'cart');
+    };
+    window.addEventListener('openCart', onOpen);
+    return () => window.removeEventListener('openCart', onOpen);
+  }, []);
+
+  useEffect(() => {
     if (step === 'checkout') {
       const saved = loadSavedCustomer();
       if (saved) {

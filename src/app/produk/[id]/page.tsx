@@ -3,8 +3,10 @@ import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { getProduct, getProducts, getSiteContent, getActivePromotions } from '@/lib/data';
 import { getHeatLabel } from '@/lib/heat';
-import { applyPromotion, formatPrice } from '@/lib/promotions';
+import { applyPromotion, applyPromoToProducts, formatPrice } from '@/lib/promotions';
 import AddToCartButton from '@/components/AddToCartButton';
+import BuyNowButton from '@/components/BuyNowButton';
+import { ProductCard } from '@/components/ProductCard';
 
 export const dynamic = 'force-dynamic';
 
@@ -47,12 +49,10 @@ export default async function ProductPage({ params }: Props) {
   if (!product) product = productsFallback[id];
   if (!product) notFound();
 
-  const CONTACT_EMAIL = 'admin@duniaherbs.com.my';
-  const emailLink = `mailto:${CONTACT_EMAIL}?subject=${encodeURIComponent(`Pertanyaan: ${product.name}`)}`;
-
   let allProducts = await getProducts();
   if (allProducts.length === 0) allProducts = Object.values(productsFallback);
-  const related = allProducts.filter((p) => p.id !== product!.id).slice(0, 4);
+  const relatedRaw = allProducts.filter((p) => p.id !== product!.id).slice(0, 4);
+  const related = applyPromoToProducts(relatedRaw, promotions);
 
   const benefits: string[] = product.benefits && Array.isArray(product.benefits) ? product.benefits : [];
   const usage = product.usage_info || '';
@@ -141,15 +141,7 @@ export default async function ProductPage({ params }: Props) {
           {/* CTA */}
           <div className="mt-8 flex flex-wrap gap-4">
             <AddToCartButton productId={product.id} productName={product.name} price={product.price} image={imageUrl} />
-            <a
-              href={emailLink}
-              className="inline-flex items-center gap-2 rounded-xl border border-herb-gold/50 px-6 py-3 text-sm font-medium text-herb-gold transition hover:bg-herb-gold/10 hover:border-herb-gold"
-            >
-              <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
-              </svg>
-              Email Kami
-            </a>
+            <BuyNowButton productId={product.id} productName={product.name} price={product.price} image={imageUrl} />
           </div>
 
           {/* Trust */}
@@ -166,21 +158,7 @@ export default async function ProductPage({ params }: Props) {
         <h2 className="font-serif text-xl font-bold text-stone-50 mb-6">Produk Lain</h2>
         <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
           {related.map((p) => (
-            <Link key={p.id} href={`/produk/${p.id}`} className="group rounded-2xl border border-stone-700/50 bg-herb-surface/60 overflow-hidden backdrop-blur-md transition hover:border-herb-gold/30">
-              <div className="relative aspect-square bg-herb-card overflow-hidden">
-                <Image
-                  src={p.image_url || PRODUCT_IMAGE_FALLBACK}
-                  alt={p.name}
-                  fill
-                  className="object-cover transition group-hover:scale-105"
-                  sizes="25vw"
-                />
-              </div>
-              <div className="p-4">
-                <h3 className="font-semibold text-stone-100 text-sm">{p.name}</h3>
-                <p className="text-herb-gold text-sm mt-1">{p.price}</p>
-              </div>
-            </Link>
+            <ProductCard key={p.id} product={p} />
           ))}
         </div>
       </div>
